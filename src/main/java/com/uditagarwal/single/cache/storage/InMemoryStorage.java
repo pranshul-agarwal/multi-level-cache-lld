@@ -1,7 +1,7 @@
-package com.uditagarwal.storage;
+package com.uditagarwal.single.cache.storage;
 
 import com.uditagarwal.exceptions.StorageFullException;
-import com.uditagarwal.storage.Storage;
+import com.uditagarwal.single.cache.storage.Storage;
 
 import java.util.HashMap;
 import java.util.Map;

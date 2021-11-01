@@ -1,4 +1,4 @@
-package com.uditagarwal.policy;
+package com.uditagarwal.single.cache.policy;
 
 public class LRUEvictionPolicy<Key> implements EvictionPolicy<Key> {
     public void keyAccessed(Object o) {

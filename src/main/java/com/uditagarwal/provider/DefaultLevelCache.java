@@ -3,18 +3,19 @@ package com.uditagarwal.provider;
 import com.uditagarwal.model.LevelCacheData;
 import com.uditagarwal.model.ReadResponse;
 import com.uditagarwal.model.WriteResponse;
+import com.uditagarwal.single.cache.SingleCacheProvider;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 import java.util.Collections;
 import java.util.List;
 
-//CacheService -> L1 -> L2 -> L3...Ln -> null
+//MultiLevelCacheService -> L1 -> L2 -> L3...Ln -> null
 //                C1    C2    ...
 @AllArgsConstructor
 public class DefaultLevelCache<Key, Value> implements ILevelCache<Key, Value> {
     private final LevelCacheData levelCacheData;
-    private final CacheProvider<Key, Value> cacheProvider;
+    private final SingleCacheProvider<Key, Value> singleCacheProvider;
 
     @NonNull
     private final ILevelCache<Key, Value> next;
@@ -22,10 +23,10 @@ public class DefaultLevelCache<Key, Value> implements ILevelCache<Key, Value> {
     @NonNull
     public WriteResponse set(Key key, Value value) {
         Double curTime = 0.0;
-        Value curLevelValue = cacheProvider.get(key);
+        Value curLevelValue = singleCacheProvider.get(key);
         curTime += levelCacheData.getReadTime();
         if (!value.equals(curLevelValue)) {
-            cacheProvider.set(key, value);
+            singleCacheProvider.set(key, value);
             curTime += levelCacheData.getWriteTime();
         }
 
@@ -36,7 +37,7 @@ public class DefaultLevelCache<Key, Value> implements ILevelCache<Key, Value> {
     @NonNull
     public ReadResponse<Value> get(Key key) {
         Double curTime = 0.0;
-        Value curLevelValue = cacheProvider.get(key);
+        Value curLevelValue = singleCacheProvider.get(key);
         curTime += levelCacheData.getReadTime();
 
         // L1 -> L2 -> L3 -> L4
@@ -45,7 +46,7 @@ public class DefaultLevelCache<Key, Value> implements ILevelCache<Key, Value> {
             curTime += nextResponse.getTotalTime();
             curLevelValue = nextResponse.getValue();
             if (curLevelValue != null) {
-                cacheProvider.set(key, curLevelValue);
+                singleCacheProvider.set(key, curLevelValue);
                 curTime += levelCacheData.getWriteTime();
             }
         }
@@ -62,7 +63,7 @@ public class DefaultLevelCache<Key, Value> implements ILevelCache<Key, Value> {
             usages = next.getUsages();
         }
 
-        usages.add(0, cacheProvider.getCurrentUsage());
+        usages.add(0, singleCacheProvider.getCurrentUsage());
         return usages;
     }
 }

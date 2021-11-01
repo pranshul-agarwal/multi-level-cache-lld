@@ -3,20 +3,20 @@ package com.uditagarwal.service;
 import com.uditagarwal.model.LevelCacheData;
 import com.uditagarwal.model.ReadResponse;
 import com.uditagarwal.model.WriteResponse;
-import com.uditagarwal.policy.LRUEvictionPolicy;
-import com.uditagarwal.provider.CacheProvider;
+import com.uditagarwal.single.cache.policy.LRUEvictionPolicy;
+import com.uditagarwal.single.cache.SingleCacheProvider;
 import com.uditagarwal.provider.DefaultLevelCache;
 import com.uditagarwal.provider.NullEffectLevelCache;
-import com.uditagarwal.storage.InMemoryStorage;
+import com.uditagarwal.single.cache.storage.InMemoryStorage;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
-public class CacheServiceTest {
+public class MultiLevelSingleCacheProviderServiceTest {
 
     @Test
     public void testLevelCache() {
-        CacheProvider<String, String> c1 = createCache(10);
-        CacheProvider<String, String> c2 = createCache(20);
+        SingleCacheProvider<String, String> c1 = createCache(10);
+        SingleCacheProvider<String, String> c2 = createCache(20);
 
         LevelCacheData cl1 = new LevelCacheData(1, 3);
         LevelCacheData cl2 = new LevelCacheData(2, 4);
@@ -24,7 +24,7 @@ public class CacheServiceTest {
         DefaultLevelCache<String, String> l2Cache = new DefaultLevelCache<>(cl2, c2, new NullEffectLevelCache<>());
         DefaultLevelCache<String, String> l1Cache = new DefaultLevelCache<>(cl1, c1, l2Cache);
 
-        CacheService<String, String> cacheService = new CacheService<>(l1Cache, 5);
+        MultiLevelCacheService<String, String> cacheService = new MultiLevelCacheService<>(l1Cache, 5);
 
         WriteResponse w1 = cacheService.set("k1", "v1");
         WriteResponse w2 = cacheService.set("k2", "v2");
@@ -55,8 +55,8 @@ public class CacheServiceTest {
         Assertions.assertEquals(3, reWritingValue.getTimeTaken());
     }
 
-    private CacheProvider<String, String> createCache(int capacity) {
-        return new CacheProvider<>(
+    private SingleCacheProvider<String, String> createCache(int capacity) {
+        return new SingleCacheProvider<>(
                 new LRUEvictionPolicy<>(),
                 new InMemoryStorage<>(capacity));
     }

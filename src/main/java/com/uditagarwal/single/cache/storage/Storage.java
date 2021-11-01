@@ -1,4 +1,4 @@
-package com.uditagarwal.storage;
+package com.uditagarwal.single.cache.storage;
 
 import com.uditagarwal.exceptions.StorageFullException;
 

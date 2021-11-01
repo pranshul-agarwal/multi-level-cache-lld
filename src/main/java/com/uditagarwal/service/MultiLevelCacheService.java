@@ -10,14 +10,14 @@ import lombok.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CacheService<Key, Value> {
+public class MultiLevelCacheService<Key, Value> {
 
     private final ILevelCache<Key, Value> multiLevelCache;
     private final List<Double> lastReadTimes;
     private final List<Double> lastWriteTimes;
     private final int lastCount;
 
-    public CacheService(@NonNull final DefaultLevelCache<Key, Value> multiLevelCache, final int lastCount) {
+    public MultiLevelCacheService(@NonNull final DefaultLevelCache<Key, Value> multiLevelCache, final int lastCount) {
         this.multiLevelCache = multiLevelCache;
         this.lastCount = lastCount;
         this.lastReadTimes = new ArrayList<>(lastCount);

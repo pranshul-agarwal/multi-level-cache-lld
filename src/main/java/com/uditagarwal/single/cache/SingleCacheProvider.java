@@ -1,15 +1,15 @@
-package com.uditagarwal.provider;
+package com.uditagarwal.single.cache;
 
-import com.uditagarwal.policy.EvictionPolicy;
-import com.uditagarwal.storage.Storage;
 import com.uditagarwal.exceptions.StorageFullException;
+import com.uditagarwal.single.cache.policy.EvictionPolicy;
+import com.uditagarwal.single.cache.storage.Storage;
 
-public class CacheProvider<Key, Value> {
+public class SingleCacheProvider<Key, Value> {
 
     private final EvictionPolicy<Key> evictionPolicy;
     private final Storage<Key, Value> storage;
 
-    public CacheProvider(EvictionPolicy<Key> evictionPolicy, Storage<Key, Value> storage) {
+    public SingleCacheProvider(EvictionPolicy<Key> evictionPolicy, Storage<Key, Value> storage) {
         this.evictionPolicy = evictionPolicy;
         this.storage = storage;
     }
